@@ -2,6 +2,9 @@
 import random
 import itertools	#for calculating n choose 2
 import sys
+import os
+from time import time
+t = time()
 
 clq_size=100
 no_clqs=3
@@ -117,218 +120,224 @@ for l in range(0,no_clqs):
 		couple_edge_list.append(e)	
 
 F = 0.4
-for perturb in range(0,101):
-	frac=float(perturb)/100.0
-	str1='./config_0.002_clique/Test_config(40%)/test_config'+str(frac)+'.txt'
-	fp=open(str1,'w')
-	
-	frac2=0.002 #For config3/config5_no_ext we do not consider cliques, so frac2<1.0, for config 1 and 2, frac2 = 1
-	fp.write('2\n')
+p = [0,10,20,30,100]
+for fr in p:
+	for perturb in range(0,101):
+		#print("Perturb value: ", perturb, time()-t)
+		#t = time()
+		frac=float(perturb)/100.0
+		str1='./config_0.002_clique/Test_config('+str(fr)+'%)/test_config'+str(frac)+'.txt'
+		if not os.path.exists('./config_0.002_clique/Test_config('+str(fr)+'%)'):
+			    os.makedirs('./config_0.002_clique/Test_config('+str(fr)+'%)')
+		fp=open(str1,'w')
+		
+		frac2=0.002 #For config3/config5_no_ext we do not consider cliques, so frac2<1.0, for config 1 and 2, frac2 = 1
+		fp.write('2\n')
 
 
-	for l in range(0,2):				#for 2 layers
-		'''
-		writes all nodes in each layer to a file, layer[l] is a list of nodes in layer l
-		'''
-		for m in layer[l]:
-			fp.write(str(m)+' ') 		
-		fp.write('\n')
-
-		# useless since ext= 0
-		s=set()
-		for e in edges[l]:
-			r=random.random()
-			if r<frac2:
-				#print s,e[0],e[1]
-				s.add((e[0],e[1]))
-		fp.write(str(len(s))+'\n')
-		for e in s:
-			fp.write(str(e[0])+' '+str(e[1])+'\n')
-
-
-		'''***********************************************************
-		writing all the edges of all cliques of the layer l to a file
-		**************************************************************'''
-
-		'''fp.write(str(len(edges[l]))+'\n')
-		for e in edges[l]:
-			fp.write(str(e[0])+' '+str(e[1])+'\n')'''
-
-	
-	fp.write('1\n1 2\n')
-	
-	'''
-	calculating the number of coupling edges to be added out of total coupling edges(300) stored in the couple_edge_list list
-	'''
-	ec=0
-	for l in range(0,no_clqs):
-		ec+=int(float(len(couple_edges[l]))*frac)+len(couple_edges_spl[l])
-	
-	ec_new_F = int(ec*F)
-	ec_new_1_F = int(ec - ec_new_F)
-	e11 =ec_new_F/no_clqs
-	e12 =ec_new_F/no_clqs
-	e21 =ec_new_F/no_clqs
-	e22 =ec_new_1_F/no_clqs
-	e31 =ec_new_1_F/no_clqs
-	e32 =ec_new_1_F/no_clqs
-	towrite =  e11+e12+e21+e22+e31+e32
-	fp.write(str(towrite)+'\n')
-	
-	'''
-	ec = number to coupling edges to be added
-	'''
-	ec=int(float(len(couple_edges[l]))*frac)*no_clqs
-	
-	
-	
-	'''
-	Adding F fraction of coupling edges in the community
-	'''
-	'''while i<ec_new_F:
-		eindex=random.randint(0,len(couple_edge_list)-1)
-		for e in couple_edge_list:
-			eindex-=1
-			if eindex==0:
-				break
-		if e not in edge_set:
-			edge_set.add(e)
-			fp.write(str(e[0])+' '+str(e[1])+'\n')
-		        i=i+1'''
-	edge_set=set()
-	ec_new_F = int(ec*F)
-	
-	for a in range(0,no_clqs):
-		i=0
-		loop_condition = ec_new_F/no_clqs
-		while(i<loop_condition):
-			eindex = random.randint(0, len(couple_edges[a])-1)
-			eindex=random.randint(0,len(couple_edges[a])-1)
-			for e in couple_edges[a]:
-				eindex-=1
-				if eindex==0:
-					break
-			#e = couple_edges[a][eindex]
-			if(e not in edge_set):
-				edge_set.add(e)
-				fp.write(str(e[0])+' '+str(e[1])+'\n')
-				i = i+1
-		'''
-    	while (i < ec_new_F/no_clqs):
-			print("are you fucking kidding me?!")
-			sys.stdout.flush()
-			break;
-			eindex=random.randint(0,len(couple_edges[a])-1)
-			print len(couple_edges[a])
-			print "eindex = " +str(eindex)
-			#for e in couple_edges[a]:
-			#	eindex-=1
-			#	if eindex==0:
-			#		break
-			e = couple_edges[a][eindex]
-			print e
-			if e not in edge_set:
-				print "added"
-				edge_set.add(e)
-				fp.write(str(e[0])+' '+str(e[1])+'\n')
-				fp.write("-------"+str(a)+"\n")
-				i=i+1
+		for l in range(0,2):				#for 2 layers
 			'''
+			writes all nodes in each layer to a file, layer[l] is a list of nodes in layer l
+			'''
+			for m in layer[l]:
+				fp.write(str(m)+' ') 		
+			fp.write('\n')
 
-	'''
-	Adding (1-F) fraction of coupling edges in the community
-	'''
-	edge_set_diff_comm = set()
-	ec_new_1_F  = int(ec - ec_new_F)
-	for a in range(0,no_clqs):
-		i=0
-		while i< (ec_new_1_F/no_clqs):
-			eindex=random.randint(0,len(couple_edges_diff_community[a])-1)
-			for e in couple_edges_diff_community[a]:
-				eindex-=1
-				if eindex==0:
-					break
-			#e = couple_edges[a][eindex]
-			if e not in edge_set_diff_comm:
-				edge_set_diff_comm.add(e)
+			# useless since ext= 0
+			s=set()
+			for e in edges[l]:
+				r=random.random()
+				if r<frac2:
+					#print s,e[0],e[1]
+					s.add((e[0],e[1]))
+			fp.write(str(len(s))+'\n')
+			for e in s:
 				fp.write(str(e[0])+' '+str(e[1])+'\n')
-				i=i+1
-			
 
-	
-	for l in range(0,no_clqs):
+
+			'''***********************************************************
+			writing all the edges of all cliques of the layer l to a file
+			**************************************************************'''
+
+			'''fp.write(str(len(edges[l]))+'\n')
+			for e in edges[l]:
+				fp.write(str(e[0])+' '+str(e[1])+'\n')'''
+
+		
+		fp.write('1\n1 2\n')
+		
 		'''
-		ec=int(float(len(couple_edges[l]))*frac)
-		edge_set=set()
-		i=0
-		while i<ec:
-			eindex=random.randint(0,len(couple_edges[l])-1)
-			for e in couple_edges[l]:
+		calculating the number of coupling edges to be added out of total coupling edges(300) stored in the couple_edge_list list
+		'''
+		ec=0
+		for l in range(0,no_clqs):
+			ec+=int(float(len(couple_edges[l]))*frac)+len(couple_edges_spl[l])
+		
+		ec_new_F = int(ec*F)
+		ec_new_1_F = int(ec - ec_new_F)
+		e11 =ec_new_F/no_clqs
+		e12 =ec_new_F/no_clqs
+		e21 =ec_new_F/no_clqs
+		e22 =ec_new_1_F/no_clqs
+		e31 =ec_new_1_F/no_clqs
+		e32 =ec_new_1_F/no_clqs
+		towrite =  e11+e12+e21+e22+e31+e32
+		fp.write(str(towrite)+'\n')
+		
+		'''
+		ec = number to coupling edges to be added
+		'''
+		ec=int(float(len(couple_edges[l]))*frac)*no_clqs
+		
+		
+		
+		'''
+		Adding F fraction of coupling edges in the community
+		'''
+		'''while i<ec_new_F:
+			eindex=random.randint(0,len(couple_edge_list)-1)
+			for e in couple_edge_list:
 				eindex-=1
 				if eindex==0:
 					break
 			if e not in edge_set:
 				edge_set.add(e)
 				fp.write(str(e[0])+' '+str(e[1])+'\n')
-			        i=i+1
-		'''	        
-		for e in couple_edges_spl[l]:	        
-			fp.write(str(e[0])+' '+str(e[1])+'\n')
-			
-	#For config1/config3/config5-- multilayer ground truth communities
-	
-	fp.write(str(no_clqs)+'\n')
-	
-	start1=1
-	start2=((clq_size+ext)*no_clqs)+1
-	'''
-	writing all the communities formed to the file 
-	'''
-	for i in range(0,no_clqs):
-		end1=start1+clq_size+ext
-		end2=start2+clq_size+ext
-			
-		for m in range(start1,end1):
-			fp.write(str(m)+' ')
+			        i=i+1'''
+		edge_set=set()
+		ec_new_F = int(ec*F)
 		
-		for m in range(start2,end2):
-			fp.write(str(m)+' ')
-		fp.write('\n')
-				
-		start1=end1
-		start2=end2									 
-	
-	
-	#For config2/config4-- single layer ground truth communities
-	'''
-	if ext>0:
-		fp.write(str(no_clqs*3)+'\n')
-	else:
-		fp.write(str(no_clqs*2)+'\n')
-		
-	start1=1
-	start2=((clq_size+ext)*no_clqs)+1
+		for a in range(0,no_clqs):
+			i=0
+			loop_condition = ec_new_F/no_clqs
+			while(i<loop_condition):
+				eindex = random.randint(0, len(couple_edges[a])-1)
+				'''eindex=random.randint(0,len(couple_edges[a])-1)
+				for e in couple_edges[a]:
+					eindex-=1
+					if eindex==0:
+						break'''
+				e = couple_edges[a][eindex]
+				if(e not in edge_set):
+					edge_set.add(e)
+					fp.write(str(e[0])+' '+str(e[1])+'\n')
+					i = i+1
+			'''
+	    	while (i < ec_new_F/no_clqs):
+				print("are you fucking kidding me?!")
+				sys.stdout.flush()
+				break;
+				eindex=random.randint(0,len(couple_edges[a])-1)
+				print len(couple_edges[a])
+				print "eindex = " +str(eindex)
+				#for e in couple_edges[a]:
+				#	eindex-=1
+				#	if eindex==0:
+				#		break
+				e = couple_edges[a][eindex]
+				print e
+				if e not in edge_set:
+					print "added"
+					edge_set.add(e)
+					fp.write(str(e[0])+' '+str(e[1])+'\n')
+					fp.write("-------"+str(a)+"\n")
+					i=i+1
+				'''
 
-	for i in range(0,no_clqs):
-		end1=start1+clq_size
-		end2=start2+clq_size
+		'''
+		Adding (1-F) fraction of coupling edges in the community
+		'''
+		edge_set_diff_comm = set()
+		ec_new_1_F  = int(ec - ec_new_F)
+		for a in range(0,no_clqs):
+			i=0
+			while i< (ec_new_1_F/no_clqs):
+				eindex=random.randint(0,len(couple_edges_diff_community[a])-1)
+				'''for e in couple_edges_diff_community[a]:
+					eindex-=1
+					if eindex==0:
+						break'''
+				e = couple_edges_diff_community[a][eindex]
+				if e not in edge_set_diff_comm:
+					edge_set_diff_comm.add(e)
+					fp.write(str(e[0])+' '+str(e[1])+'\n')
+					i=i+1
+				
+
+		
+		for l in range(0,no_clqs):
+			'''
+			ec=int(float(len(couple_edges[l]))*frac)
+			edge_set=set()
+			i=0
+			while i<ec:
+				eindex=random.randint(0,len(couple_edges[l])-1)
+				for e in couple_edges[l]:
+					eindex-=1
+					if eindex==0:
+						break
+				if e not in edge_set:
+					edge_set.add(e)
+					fp.write(str(e[0])+' '+str(e[1])+'\n')
+				        i=i+1
+			'''	        
+			for e in couple_edges_spl[l]:	        
+				fp.write(str(e[0])+' '+str(e[1])+'\n')
+				
+		#For config1/config3/config5-- multilayer ground truth communities
+		
+		fp.write(str(no_clqs)+'\n')
+		
+		start1=1
+		start2=((clq_size+ext)*no_clqs)+1
+		'''
+		writing all the communities formed to the file 
+		'''
+		for i in range(0,no_clqs):
+			end1=start1+clq_size+ext
+			end2=start2+clq_size+ext
+				
+			for m in range(start1,end1):
+				fp.write(str(m)+' ')
 			
-		for m in range(start1,end1):
-			fp.write(str(m)+' ')
-		fp.write('\n')	
-		
-		for m in range(start2,end2):
-			fp.write(str(m)+' ')
-		fp.write('\n')
-		
-		for m in range(end1,end1+ext):
-			fp.write(str(m)+' ')
-		for m in range(end2,end2+ext):
-			fp.write(str(m)+' ')
-		if ext>0:
+			for m in range(start2,end2):
+				fp.write(str(m)+' ')
 			fp.write('\n')
 					
-		start1=end1+ext
-		start2=end2+ext	
-	'''								
-	fp.close()					
+			start1=end1
+			start2=end2									 
+		
+		
+		#For config2/config4-- single layer ground truth communities
+		'''
+		if ext>0:
+			fp.write(str(no_clqs*3)+'\n')
+		else:
+			fp.write(str(no_clqs*2)+'\n')
+			
+		start1=1
+		start2=((clq_size+ext)*no_clqs)+1
+
+		for i in range(0,no_clqs):
+			end1=start1+clq_size
+			end2=start2+clq_size
+				
+			for m in range(start1,end1):
+				fp.write(str(m)+' ')
+			fp.write('\n')	
+			
+			for m in range(start2,end2):
+				fp.write(str(m)+' ')
+			fp.write('\n')
+			
+			for m in range(end1,end1+ext):
+				fp.write(str(m)+' ')
+			for m in range(end2,end2+ext):
+				fp.write(str(m)+' ')
+			if ext>0:
+				fp.write('\n')
+						
+			start1=end1+ext
+			start2=end2+ext	
+		'''								
+		fp.close()					
