@@ -27,6 +27,8 @@ The python file has 2 main functions with which we will interact with. Others ar
 
 NETWORK INPUT: network file paths can be specified in the variables from lines 214 to 220
 
+The code reads in the pickle files of (first) ground truth network and communities and then for (either or both) Louvain (and/or GN) detected communities.
+
 The pickle files for ground truth, Louvain and GN were each slightly different. 
 To read these 3 kinds of files and draw network, codes, with comments are on the following lines:
 Ground Truth : Line 221
