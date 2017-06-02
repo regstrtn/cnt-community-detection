@@ -22,7 +22,7 @@ The python file has 2 main functions with which we will interact with. Others ar
 
 2. draw_graph_from_nx(ml_network, commu, plotname, title)
    
-   This function will draw the two layer plot. The ml_network is the network returned by align_communities 
+   This function will draw the two layered plot and save it in the location specified by 'plotname' variable. The ml_network is the network returned by align_communities 
    function earlier. 
 
 NETWORK INPUT: network file paths can be specified in the variables from lines 214 to 220
