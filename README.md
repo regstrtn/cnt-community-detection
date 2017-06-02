@@ -1,4 +1,4 @@
-# cnt-community-detection
+# Multi Layer Community Detection
 
 Most of the code in the repository is for computing modularity values for different network configurations and generating modularity plots.
 
