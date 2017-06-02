@@ -25,5 +25,5 @@ It has 2 main functions with which we will interact with:
 The pickle files for ground truth, Louvain and GN were each slightly different. 
 To read these 3 kinds of files and draw network, codes, with comments are on the following lines:
 Ground Truth : Line 221
-GN : 240
-Louvain : 253
+GN : Line 240
+Louvain : Line 253
