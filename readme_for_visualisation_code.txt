@@ -1,6 +1,12 @@
 README for plot_communities_xx.py file
 
-It has 2 main functions with which we will interact with: 
+REQUIREMENTS: 1. python3
+              2. The very latest version of matplotlib (for good color scheme), and 
+              3. networkx.
+              If matplotlib is not the latest version, you can upgrade it using pip3 install --upgrade matplotlib
+
+
+The python file has 2 main functions with which we will interact with. Others are auxiliary functions.
 
 1. align_communities()
   This function relabels the nodes so that all nodes of one community are bunched together spatially. 
@@ -16,11 +22,10 @@ It has 2 main functions with which we will interact with:
 
 2. draw_graph_from_nx(ml_network, commu, plotname, title)
    
-   This function will draw and save the two layered plot in the location specified by plotname variable. The ml_network is the network returned by align_communities 
+   This function will draw the two layer plot. The ml_network is the network returned by align_communities 
    function earlier. 
 
-3. Input network file paths can be specified in the variables from lines 214 to 220
-
+NETWORK INPUT: network file paths can be specified in the variables from lines 214 to 220
 
 The pickle files for ground truth, Louvain and GN were each slightly different. 
 To read these 3 kinds of files and draw network, codes, with comments are on the following lines:
