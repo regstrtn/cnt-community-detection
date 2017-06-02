@@ -8,4 +8,4 @@ For visualising the ground truth and detected communites, use the following pyth
 [Visualisation code](plot_communities_p.py)
 
 
-[Readme for the visualisation code.](readme_for_visualisation_code.txt)
+[Readme for the visualisation code](readme_for_visualisation_code.txt)
